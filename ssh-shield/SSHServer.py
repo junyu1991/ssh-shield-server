@@ -7,7 +7,7 @@ from ShellNameSpace import ShellNameSpace,GetMessageThread
 
 import queue
 
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__, static_folder='ssh', static_url_path='/ssh')
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app,  cors_allowed_origins="*", async_mode="threading")
 config = SSHServerConfig(hostname='127.0.0.1', port=22, username='test', password='password')
@@ -18,6 +18,10 @@ def after_request(resp):
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 app.after_request(after_request)
+
+@app.route('/')
+def index():
+    return url_for('/index.html')
 
 if __name__ == '__main__':
     print('Starting the server')

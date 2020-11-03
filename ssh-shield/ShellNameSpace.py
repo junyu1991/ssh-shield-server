@@ -106,9 +106,14 @@ def get_sshmessage_thread(socketio, room, namespace, sshclient):
     while not sshclient.client.getShell().exit_status_ready():
         message = sshclient.client.getShell().recv(1024*1024)
         if(sshclient.encodable()):
-            message = message.decode(sshclient.encode).encode()
-            print('message:'+message.decode(sshclient.encode))
-        socketio.emit('cmdResult', message, namespace=namespace, room=room)
+            try:
+                tempMessage = message.decode(sshclient.encode).encode()
+                print('message:'+message.decode(sshclient.encode))
+                socketio.emit('cmdResult', tempMessage, namespace=namespace, room=room)
+            except Exception:
+                socketio.emit('cmdResult', message, namespace=namespace, room=room)
+        else:
+            socketio.emit('cmdResult', message, namespace=namespace, room=room)
 
 
 class GetMessageThread(threading.Thread):
